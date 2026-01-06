@@ -1,0 +1,39 @@
+esphome:
+  name: m16v2
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/hzkincony/esphome-zmpt101b
+    refresh: 1min
+
+# Enable logging
+logger:
+
+sensor:
+  - platform: zmpt101b
+    name: "m16--AI zmpt 34"
+    adc_pin: 34
+    id: voltage_1
+    unit_of_measurement: V
+    accuracy_decimals: 1
+    state_class: "measurement"
+  - platform: zmpt101b
+    name: "m16--AI zmpt 36"
+    adc_pin: 36
+    id: voltage_2
+    unit_of_measurement: V
+    accuracy_decimals: 1
+    state_class: "measurement"
+  - platform: zmpt101b
+    name: "m16--AI zmpt 39"
+    adc_pin: 39
+    id: voltage_3
+    unit_of_measurement: V
+    accuracy_decimals: 1
+    state_class: "measurement"
