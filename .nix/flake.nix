@@ -15,8 +15,6 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             esphome
-            python3
-            platformio
           ];
 
           shellHook = ''
