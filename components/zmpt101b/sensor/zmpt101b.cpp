@@ -43,16 +43,24 @@ bool ZMPT101B::pinToAdcChannel(uint8_t pin, adc_unit_t &unit, adc_channel_t &cha
 bool ZMPT101B::begin()
 {
 	if (this->initialized_) {
+		ESP_LOGI(TAG, "ZMPT101B on GPIO%d already initialized", this->pin_);
 		return true;
 	}
-	
+
 	// Convert pin to ADC unit and channel
 	if (!pinToAdcChannel(this->pin_, this->adc_unit_, this->adc_channel_)) {
+		ESP_LOGE(TAG, "Failed to convert GPIO%d to ADC channel", this->pin_);
 		return false;
 	}
-	
+
+	// Validate adc_unit_
+	if (this->adc_unit_ < 0 || this->adc_unit_ >= 2) {
+		ESP_LOGE(TAG, "Invalid ADC unit %d for GPIO%d", this->adc_unit_, this->pin_);
+		return false;
+	}
+
 	ESP_LOGI(TAG, "GPIO%d -> ADC%d Channel %d", this->pin_, this->adc_unit_ + 1, this->adc_channel_);
-	
+
 	// Check if this ADC unit is already initialized (shared handle)
 	if (shared_adc_handles_[this->adc_unit_] == nullptr) {
 		// First sensor using this ADC unit - create the handle
@@ -95,14 +103,26 @@ int ZMPT101B::readAdc()
 		ESP_LOGE(TAG, "ADC not initialized");
 		return -1;
 	}
-	
+
+	// Boundary check for adc_unit_
+	if (this->adc_unit_ < 0 || this->adc_unit_ >= 2) {
+		ESP_LOGE(TAG, "Invalid ADC unit: %d", this->adc_unit_);
+		return -1;
+	}
+
+	// Check if handle is valid
+	if (shared_adc_handles_[this->adc_unit_] == nullptr) {
+		ESP_LOGE(TAG, "ADC%d handle is null", this->adc_unit_ + 1);
+		return -1;
+	}
+
 	int raw_value = 0;
 	esp_err_t err = adc_oneshot_read(shared_adc_handles_[this->adc_unit_], this->adc_channel_, &raw_value);
 	if (err != ESP_OK) {
 		ESP_LOGW(TAG, "ADC read failed: %s", esp_err_to_name(err));
 		return -1;
 	}
-	
+
 	return raw_value;
 }
 

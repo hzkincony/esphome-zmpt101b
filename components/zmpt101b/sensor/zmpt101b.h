@@ -35,9 +35,9 @@ private:
 	uint8_t  pin_;
 	uint32_t period_;
 	float 	 sensitivity_ = DEFAULT_SENSITIVITY;
-	
-	adc_unit_t adc_unit_;
-	adc_channel_t adc_channel_;
+
+	adc_unit_t adc_unit_ = ADC_UNIT_1;
+	adc_channel_t adc_channel_ = ADC_CHANNEL_0;
 	bool initialized_ = false;
 	
 	/// Shared ADC handles for ADC1 and ADC2 (static to be shared across all instances)
