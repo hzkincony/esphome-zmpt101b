@@ -15,24 +15,46 @@ external_components:
 logger:
 
 sensor:
+  # Define ADC sensors first (set update_interval to never, as they will be sampled by ZMPT101B sensors)
+  - platform: adc
+    pin: 34
+    id: adc34
+    update_interval: never
+    attenuation: 11db
+
+  - platform: adc
+    pin: 36
+    id: adc36
+    update_interval: never
+    attenuation: 11db
+
+  - platform: adc
+    pin: 39
+    id: adc39
+    update_interval: never
+    attenuation: 11db
+
+  # ZMPT101B sensors reference the ADC sensors
   - platform: zmpt101b
     name: "m16--AI zmpt 34"
-    adc_pin: 34
+    sensor: adc34
+    sensitivity: 500.0
+    frequency: 50
+    update_interval: 60s
     id: voltage_1
-    unit_of_measurement: V
-    accuracy_decimals: 1
-    state_class: "measurement"
+
   - platform: zmpt101b
     name: "m16--AI zmpt 36"
-    adc_pin: 36
+    sensor: adc36
+    sensitivity: 500.0
+    frequency: 50
+    update_interval: 60s
     id: voltage_2
-    unit_of_measurement: V
-    accuracy_decimals: 1
-    state_class: "measurement"
+
   - platform: zmpt101b
     name: "m16--AI zmpt 39"
-    adc_pin: 39
+    sensor: adc39
+    sensitivity: 500.0
+    frequency: 50
+    update_interval: 60s
     id: voltage_3
-    unit_of_measurement: V
-    accuracy_decimals: 1
-    state_class: "measurement"
