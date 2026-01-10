@@ -3,3 +3,5 @@
 *~
 /.direnv/
 /.esphome/
+/esphome/
+/.agent-shell/
