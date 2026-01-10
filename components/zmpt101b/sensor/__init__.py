@@ -41,7 +41,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_FREQUENCY, default=50): cv.int_range(min=50, max=60),
         }
     )
-    .extend(cv.polling_component_schema("60s"))
+    .extend(cv.polling_component_schema("5s"))
 )
 
 
