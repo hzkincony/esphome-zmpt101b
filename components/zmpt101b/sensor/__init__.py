@@ -29,7 +29,7 @@ CONFIG_SCHEMA = (
     sensor.sensor_schema(
         ZMPT101BSensor,
         unit_of_measurement=UNIT_VOLT,
-        accuracy_decimals=2,
+        accuracy_decimals=1,
         device_class=DEVICE_CLASS_VOLTAGE,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_FLASH,
