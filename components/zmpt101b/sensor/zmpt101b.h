@@ -1,59 +1,46 @@
 #pragma once
 
-#include <stdint.h>
-
-#ifdef ESP32
-#include "esp_adc/adc_oneshot.h"
-#include "esp_adc/adc_cali.h"
-#include "esp_adc/adc_cali_scheme.h"
-#include "hal/adc_types.h"
-#endif
+#include "esphome/core/component.h"
+#include "esphome/components/sensor/sensor.h"
+#include "esphome/components/voltage_sampler/voltage_sampler.h"
 
 #define DEFAULT_FREQUENCY 50
 #define DEFAULT_SENSITIVITY 500.0f
 
-#define ADC_SCALE 4095.0f
-#define VREF 3.3f
-
 namespace esphome {
-namespace zmpt101b_ns {
+namespace zmpt101b {
 
-#ifdef ESP32
+class ZMPT101BSensor : public sensor::Sensor, public PollingComponent {
+ public:
+  void update() override;
+  void dump_config() override;
+  float get_setup_priority() const override;
 
-class ZMPT101B
-{
-public:
-	ZMPT101B(uint8_t pin, uint16_t frequency = DEFAULT_FREQUENCY);
-	
-	/// Initialize ADC for this pin (must be called once during setup)
-	bool begin();
-	
-	void setSensitivity(float value);
-	float getRmsVoltage(uint8_t loopCount = 1);
+  void set_source(voltage_sampler::VoltageSampler *source) { this->source_ = source; }
+  void set_sensitivity(float sensitivity) { this->sensitivity_ = sensitivity; }
+  void set_frequency(uint16_t frequency) {
+    this->frequency_ = frequency;
+    this->period_ms_ = 1000.0f / frequency;
+  }
 
-private:
-	uint8_t  pin_;
-	uint32_t period_;
-	float 	 sensitivity_ = DEFAULT_SENSITIVITY;
+  float get_rms_voltage(uint8_t loop_count = 1);
 
-	adc_unit_t adc_unit_ = ADC_UNIT_1;
-	adc_channel_t adc_channel_ = ADC_CHANNEL_0;
-	bool initialized_ = false;
-	
-	/// Shared ADC handles for ADC1 and ADC2 (static to be shared across all instances)
-	static adc_oneshot_unit_handle_t shared_adc_handles_[2];
-	
-	/// Convert GPIO pin to ADC unit and channel
-	bool pinToAdcChannel(uint8_t pin, adc_unit_t &unit, adc_channel_t &channel);
-	
-	/// Read ADC value using ESP-IDF API
-	int readAdc();
-	
-	/// Calculate zero point (DC offset)
-	int getZeroPoint();
+ protected:
+  /// The sampling source to read values from (ADC sensor)
+  voltage_sampler::VoltageSampler *source_{nullptr};
+
+  /// Sensitivity value (mV/V)
+  float sensitivity_{DEFAULT_SENSITIVITY};
+
+  /// AC frequency (Hz)
+  uint16_t frequency_{DEFAULT_FREQUENCY};
+
+  /// Period in milliseconds
+  float period_ms_{20.0f};  // Default for 50Hz
+
+  /// Calculate zero point (DC offset)
+  float get_zero_point();
 };
 
-#endif  // ESP32
-
-}  // namespace zmpt101b_ns
+}  // namespace zmpt101b
 }  // namespace esphome
