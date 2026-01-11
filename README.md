@@ -27,7 +27,7 @@ sensor:
     pin: 34
     id: adc34
     update_interval: never
-    attenuation: 11db
+    attenuation: 12db
 
   # ZMPT101B sensor
   - platform: zmpt101b
