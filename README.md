@@ -44,3 +44,25 @@ sensor:
 - **sensitivity** (Optional): Calibration value in mV/V. Default: `500.0`
 - **frequency** (Optional): AC frequency, `50` or `60` Hz. Default: `50`
 - **update_interval** (Optional): Update interval. Default: `5s`
+
+## How to Calculate Sensitivity
+
+The `sensitivity` parameter calibrates the sensor for accurate voltage readings.
+
+**Steps:**
+
+1. Measure the actual AC voltage with a multimeter (e.g., 220V)
+2. Check the voltage reported by the sensor in ESPHome (e.g., 210V)
+3. Calculate the new sensitivity:
+   ```
+   new_sensitivity = current_sensitivity × (actual_voltage / measured_voltage)
+   ```
+
+**Example:**
+
+- Current sensitivity: `500.0`
+- Actual voltage (multimeter): `220V`
+- Measured voltage (sensor): `210V`
+- New sensitivity: `500.0 × (220 / 210) = 523.8`
+
+Update your configuration with the new sensitivity value and test again. Repeat if needed for better accuracy.
